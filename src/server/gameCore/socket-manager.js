@@ -36,6 +36,12 @@ function setUpEvents() {
                     gameLoop.updatePlayer(data.token, data.tankState);
                 }
             });
+            socket.on("shot", (data) => {
+                //check if the token is valid
+                if (globalState.isTokenValid(data.token)) {
+                    gameLoop.shotTaken(data.token, data.lookAt);
+                }
+            });
         });
     }
 }

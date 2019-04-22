@@ -29,6 +29,7 @@ game = function(canvas, socket, token) {
 
     this.playerTank = undefined;
     this.otherPlayers = {};
+    this.bullets = {};
     this.movementVector = new THREE.Vector3(0, 0, 0);
     this.movementVelocity = 0;// new THREE.Vector3(0, 0, 0); //received from the server
     this.lastRender = undefined; //the timestamp of the last render loop - use to calculate movement interpolation
@@ -58,8 +59,6 @@ game.prototype = {
             that.initScene(data);
         });
         this.socket.on("tick", function(data) {
-            console.log("tick");
-            console.log(data);
 
             if (data.players[that.token] === undefined) {
                 return;
@@ -72,6 +71,7 @@ game.prototype = {
             delete data.players[that.token];
 
             that.updateOtherPlayers(data.players);
+            that.updateBullets(data.bullets);
         });
     },
 
@@ -85,6 +85,19 @@ game.prototype = {
             else {
                 this.otherPlayers[k].setPosition(playerData[k].position.x, playerData[k].position.y, playerData[k].position.z);
                 this.otherPlayers[k].setLookAt(new THREE.Vector3(playerData[k].lookAt.x, 5, playerData[k].lookAt.z));
+            }
+        }
+    },
+
+    updateBullets: function(bulletData) {
+        for (let k in bulletData) {
+            //if a client-side representation does not exit, create it
+            if (!this.bullets.hasOwnProperty(k)) {
+                this.createNewBullet(k, bulletData[k]);
+            }
+            //if representation already exists
+            else {
+                this.bullets[k].setPosition(bulletData[k].position.x, bulletData[k].position.y, bulletData[k].position.z);
             }
         }
     },
@@ -123,6 +136,15 @@ game.prototype = {
         // this.scene.add(this.playerTank.body);
         // this.scene.add(this.playerTank.turret);
         this.scene.add(this.otherPlayers[id].group);
+    },
+
+    createNewBullet: function(token, data) {
+        this.bullets[token] = new game.bullet();
+        this.bullets[token].bulletObj = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), new THREE.MeshBasicMaterial({color: 0x000000}));
+        this.bullets[token].bulletObj.position.set(data.position.x, data.position.y, data.position.z);
+        this.bullets[token].bulletObj.up.set(0, 0, -1);
+
+        this.scene.add(this.bullets[token].bulletObj);
     },
 
     initScene: function(newPlayerData) {
@@ -187,7 +209,8 @@ game.prototype = {
         this.scene.add(this.playerTank.group);
 
         //add event listeners on the canvas container
-        let that = this;
+        let that = this; //context will be switched on event callback, this saves the correct one locally
+        //determine the point at which the player is aiming
         this.canvas.onmousemove = function(e) {
             let raycaster = new THREE.Raycaster();
             let mousePosition = new THREE.Vector2(0, 0);
@@ -195,7 +218,7 @@ game.prototype = {
             mousePosition.x = (e.clientX / that.canvas.clientWidth) * 2 - 1;
             mousePosition.y = -(e.clientY / that.canvas.clientHeight) * 2 + 1;
             raycaster.setFromCamera(mousePosition, that.camera);
-            var intersections = raycaster.intersectObject(that.redZone);
+            let intersections = raycaster.intersectObject(that.redZone);
             //there shouldn't be more than 1 intersection, but we'll just get the first element anyways
             if (intersections.length > 0) {
                 that.playerTank.setLookAt(new THREE.Vector3(intersections[0].point.x, 5, intersections[0].point.z));
@@ -229,7 +252,6 @@ game.prototype = {
         };
 
         this.canvas.parentElement.onkeyup = function(e) {
-            console.log(e.key);
             if (e.key === "a" || e.key === "d" || e.key === "s" || e.key === "w") {
                 switch (e.key) {
                     case "a" :
@@ -245,6 +267,19 @@ game.prototype = {
                         that.pressedMovementKey.w = false;
                         break;
                 }
+            }
+        };
+
+        this.canvas.parentElement.onmousedown = function(e) {
+            //check for left mouse button
+            if (e.button === 0) {
+                //inform server that the player has taken a shot
+                that.socket.emit('shot', {
+                    token: token,
+                    lookAt: that.playerTank.getLookAt()
+                });
+                //knowing that we are guaranteed that the server will receive the shot message, we can start to simulate the bullet now
+                //that.createNewBullet();
             }
         };
 
@@ -285,6 +320,12 @@ game.prototype = {
             //translate the player tank to new position
             this.playerTank.translateX((this.movementVector.x * this.movementVelocity) * delta);
             this.playerTank.translateZ((this.movementVector.z * this.movementVelocity) * delta);
+
+            //test translate bullet
+            if (this.bullets["t"]) {
+                this.bullets["t"].translateX((this.bullets["t"].direction.x * this.movementVelocity) * delta);
+                this.bullets["t"].translateZ((this.bullets["t"].direction.z * this.movementVelocity) * delta);
+            }
         }
         else {
             this.lastRender = new Date();
