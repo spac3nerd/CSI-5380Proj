@@ -38,6 +38,8 @@ game.tank = function() {
         isAlive: false,
         xVelocity: 0,
         yVelocity: 0,
+        text: undefined,
+        score: 0,
         setLookAt: setLookAt,
         getLookAt: getLookAt,
         setPosition: setPosition,

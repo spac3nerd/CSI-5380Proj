@@ -16,8 +16,8 @@ function getScore() {
     return score;
 }
 
-function incrementPoints(token) {
-    score[token].score -= 1;
+function incrementScore(token) {
+    score[token].score += 1;
 }
 
 function decrementScore(token) {
@@ -56,7 +56,7 @@ module.exports = {
     setUserTokens: setUserTokens,
     getUserTokens: getUserTokens,
     isTokenValid: isTokenValid,
-    incrementPoints: incrementPoints,
+    incrementScore: incrementScore,
     decrementScore: decrementScore,
     getScore: getScore
 };

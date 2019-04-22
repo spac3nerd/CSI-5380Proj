@@ -19,8 +19,8 @@ let bounds = {
     zMin: 50
 };
 
-let bulletVelocity = 70;
-let movementVelocity = 45;
+let bulletVelocity = 80;
+let movementVelocity = 55;
 
 
 //called for each update from clients
@@ -54,8 +54,8 @@ function shotTaken(token, lookAt) {
 
 //returns a random spawn position on the game map
 function generateSpawnPosition() {
-    let x = Math.floor(Math.random() * (bounds.xSpan - 10)) - Math.abs(bounds.xMin);
-    let z = Math.floor(Math.random() * (bounds.zSpan - 10)) - Math.abs(bounds.zMin);
+    let x = Math.floor(Math.random() * (bounds.xSpan - 10)) - (Math.abs(bounds.xMin) - 5);
+    let z = Math.floor(Math.random() * (bounds.zSpan - 10)) - (Math.abs(bounds.zMin) - 5);
     let y = 5;
 
     return new three.Vector3(x, y, z);
@@ -67,6 +67,26 @@ function checkOutOfBounds() {
             let spawnPos = generateSpawnPosition();
             playerTanks[k].obj.position.set(spawnPos.x, spawnPos.y, spawnPos.z);
             globalState.decrementScore(k);
+        }
+    }
+}
+
+//there are 2 options, 1 - perform collision check with ray casting
+// or 2 - since it's 2D, we can just calculate based on X/Z coordinates
+//option 2 is much faster than casting a ray for every vertex in an object
+function checkHits() {
+    for (let k in shots) {
+        for (let p in playerTanks) {
+            if (shots[k].owner !== p) {
+                let sX = shots[k].obj.position.x;
+                let sZ = shots[k].obj.position.z;
+                if (sX > (playerTanks[p].obj.position.x - 2.5) && sX < (playerTanks[p].obj.position.x + 2.5) && sZ > (playerTanks[p].obj.position.z - 2.5) && sZ < (playerTanks[p].obj.position.z + 2.5)) {
+
+                    let spawnPos = generateSpawnPosition();
+                    playerTanks[p].obj.position.set(spawnPos.x, spawnPos.y, spawnPos.z);
+                    globalState.incrementScore(shots[k].owner);
+                }
+            }
         }
     }
 }
@@ -115,6 +135,7 @@ function loopGame() {
     }
 
     checkOutOfBounds();
+    checkHits();
 
     socketManager.broadcast({
         players: newPlayerState,

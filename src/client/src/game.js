@@ -25,6 +25,8 @@ game = function(canvas, socket, token, name) {
     this.backgroundMesh = undefined;
     this.redZone = undefined;
     this.intersectionPlane = undefined; //Using this as a dummy math object to calculate the intersection of the mouse position
+    this.font = undefined;
+    this.fontMaterial = new THREE.MeshBasicMaterial({color: 0xffffff});
 
     //contains all elements of a player tank - all player objects spawn off of it
 
@@ -54,6 +56,12 @@ game.prototype = {
             token: token,
             name: this.name
         });
+        //load the typeface font
+        let loader = new THREE.FontLoader();
+        let that = this;
+        loader.load( "lib/helvetiker_regular.typeface.json", function (font) {
+            that.font = font;
+        });
     },
 
     configSocket: function() {
@@ -77,6 +85,7 @@ game.prototype = {
 
             that.updateOtherPlayers(data.players);
             that.updateBullets(data.bullets);
+            that.updateScore(data.score);
         });
     },
 
@@ -107,6 +116,52 @@ game.prototype = {
         }
     },
 
+    updateScore: function(scoreData) {
+        for (let k in scoreData) {
+            //update player score
+            if (this.token === k) {
+                //only update on score change - changing 3D text is expensive
+                if (scoreData[k].score !== this.playerTank.score) {
+                    this.playerTank.group.remove(this.playerTank.text);
+                    let textGeo = new THREE.TextGeometry(scoreData[k].name + ": " + scoreData[k].score, {
+                        font: this.font,
+                        size: 2,
+                        height: 2,
+                        curveSegments: 12,
+                        bevelEnabled: false
+                    });
+                    textGeo =  new THREE.BufferGeometry().fromGeometry(textGeo);
+                    textGeo.translate(0, 5, -5);
+                    let fontMesh = new THREE.Mesh(textGeo, this.fontMaterial);
+                    fontMesh.setRotationFromEuler(new THREE.Euler( -Math.PI / 2, 0, 0, 'XYZ' ));
+                    this.playerTank.text = fontMesh;
+                    this.playerTank.group.add(fontMesh);
+                    this.playerTank.score = scoreData[k].score;
+                }
+            }
+            //update other players
+            else if (this.otherPlayers.hasOwnProperty(k)) {
+                if (scoreData[k].score !== this.otherPlayers[k].score) {
+                    this.otherPlayers[k].group.remove(this.otherPlayers[k].text);
+                    let textGeo = new THREE.TextGeometry(scoreData[k].name + ": " + scoreData[k].score, {
+                        font: this.font,
+                        size: 2,
+                        height: 2,
+                        curveSegments: 12,
+                        bevelEnabled: false
+                    });
+                    textGeo = new THREE.BufferGeometry().fromGeometry(textGeo);
+                    textGeo.translate(0, 5, -5);
+                    let fontMesh = new THREE.Mesh(textGeo, this.fontMaterial);
+                    fontMesh.setRotationFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0, 'XYZ'));
+                    this.otherPlayers[k].text = fontMesh;
+                    this.otherPlayers[k].group.add(fontMesh);
+                    this.otherPlayers[k].score = scoreData[k].score;
+                }
+            }
+        }
+    },
+
     createNewTank: function(id, state) {
         console.log(state);
         this.otherPlayers[id] = new game.tank();
@@ -129,10 +184,23 @@ game.prototype = {
         this.otherPlayers[id].turretGroup.up.set(0, 0, -1);
         this.otherPlayers[id].turretGroup.position.set(0, 5, 0);
 
+        let textGeo = new THREE.TextGeometry(state.name + ": 0", {
+            font: this.font,
+            size: 2,
+            height: 2,
+            curveSegments: 12,
+            bevelEnabled: false
+        });
+        textGeo =  new THREE.BufferGeometry().fromGeometry(textGeo);
+        textGeo.translate(0, 5, -5);
+        let fontMesh = new THREE.Mesh(textGeo, this.fontMaterial);
+        fontMesh.setRotationFromEuler(new THREE.Euler( -Math.PI / 2, 0, 0, 'XYZ' ));
+        this.otherPlayers[id].text = fontMesh;
 
         this.otherPlayers[id].group = new THREE.Group();
         this.otherPlayers[id].group.add(this.otherPlayers[id].body);
         this.otherPlayers[id].group.add(this.otherPlayers[id].turretGroup);
+        this.otherPlayers[id].group.add(this.otherPlayers[id].text);
         this.otherPlayers[id].group.position.set(state.position.x, state.position.y, state.position.z);
         this.otherPlayers[id].group.up.set(0, 0, -1);
 
@@ -140,6 +208,7 @@ game.prototype = {
 
         // this.scene.add(this.playerTank.body);
         // this.scene.add(this.playerTank.turret);
+        this.otherPlayers[id].score = 0;
         this.scene.add(this.otherPlayers[id].group);
     },
 
@@ -165,21 +234,22 @@ game.prototype = {
 
         //set up the game field
         this.backgroundMesh = new THREE.Mesh(new THREE.PlaneGeometry(100, 100, 32), new THREE.MeshBasicMaterial( {color: 0xd1d1d1, side: THREE.DoubleSide} ));
-        this.backgroundMesh.setRotationFromEuler(new THREE.Euler( 1.57, 0, 0, 'XYZ' )); //rotate to coincide with -Z axis into the screen
+        this.backgroundMesh.setRotationFromEuler(new THREE.Euler( Math.PI / 2, 0, 0, 'XYZ' )); //rotate to coincide with -Z axis into the screen
         this.redZone = new THREE.Mesh(new THREE.PlaneGeometry(110, 110, 32), new THREE.MeshBasicMaterial( {color: 0xff3535, side: THREE.DoubleSide} ));
         this.redZone.position.set(0, -10, 0); //set behind the main field
-        this.redZone.setRotationFromEuler(new THREE.Euler( 1.57, 0, 0, 'XYZ' ));
+        this.redZone.setRotationFromEuler(new THREE.Euler( Math.PI / 2, 0, 0, 'XYZ' ));
         this.scene.add(this.backgroundMesh);
         this.scene.add(this.redZone);
 
         //not really part of the scene, just used to help with some math
         this.intersectionPlane = new THREE.Mesh(new THREE.PlaneGeometry(120, 120, 32, 32), new THREE.MeshBasicMaterial({color: 0x00FFFF, visible: false}));
-        this.intersectionPlane.position.set(0, 0, 0);
-        this.intersectionPlane.setRotationFromEuler(new THREE.Euler( 1.57, 0, 0, 'XYZ' ));
+        this.intersectionPlane.position.set(0, 5, 0);
+        this.intersectionPlane.setRotationFromEuler(new THREE.Euler( -Math.PI / 2, 0, 0, 'XYZ' ));
         //this.intersectionPlane.up.set(0, 1, 0);
         this.scene.add(this.intersectionPlane);
 
         //spawn player at the location given by the server
+        //TODO - merge with creating other player tanks
         this.playerTank = new game.tank();
         this.playerTank.body = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), new THREE.MeshBasicMaterial({color: 0x1900ff}));
         this.playerTank.body.position.set(0, 0, 0);
@@ -200,10 +270,23 @@ game.prototype = {
         this.playerTank.turretGroup.up.set(0, 0, -1);
         this.playerTank.turretGroup.position.set(0, 5, 0);
 
+        let textGeo = new THREE.TextGeometry(this.name + ": 0", {
+            font: this.font,
+            size: 2,
+            height: 2,
+            curveSegments: 12,
+            bevelEnabled: false
+        });
+        textGeo =  new THREE.BufferGeometry().fromGeometry(textGeo);
+        textGeo.translate(0, 5, -5);
+        let fontMesh = new THREE.Mesh(textGeo, this.fontMaterial);
+        fontMesh.setRotationFromEuler(new THREE.Euler( -Math.PI / 2, 0, 0, 'XYZ' ));
+        this.playerTank.text = fontMesh;
 
         this.playerTank.group = new THREE.Group();
         this.playerTank.group.add(this.playerTank.body);
         this.playerTank.group.add(this.playerTank.turretGroup);
+        this.playerTank.group.add(this.playerTank.text);
         this.playerTank.group.position.set(newPlayerData.pos.x, newPlayerData.pos.y, newPlayerData.pos.z);
         this.playerTank.group.up.set(0, 0, -1);
 
@@ -211,6 +294,7 @@ game.prototype = {
 
        // this.scene.add(this.playerTank.body);
        // this.scene.add(this.playerTank.turret);
+        this.playerTank.score = 0;
         this.scene.add(this.playerTank.group);
 
         //add event listeners on the canvas container
@@ -223,10 +307,10 @@ game.prototype = {
             mousePosition.x = (e.clientX / that.canvas.clientWidth) * 2 - 1;
             mousePosition.y = -(e.clientY / that.canvas.clientHeight) * 2 + 1;
             raycaster.setFromCamera(mousePosition, that.camera);
-            let intersections = raycaster.intersectObject(that.redZone);
+            let intersections = raycaster.intersectObject(that.intersectionPlane);
             //there shouldn't be more than 1 intersection, but we'll just get the first element anyways
             if (intersections.length > 0) {
-                that.playerTank.setLookAt(new THREE.Vector3(intersections[0].point.x, 5, intersections[0].point.z));
+                that.playerTank.setLookAt(new THREE.Vector3(intersections[0].point.x, intersections[0].point.y, intersections[0].point.z));
             }
         };
 
