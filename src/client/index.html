@@ -83,7 +83,7 @@
 
                     console.log(token);
                     socket = io(socketURL);
-                    gameInstance = new game(canvas, socket, token);
+                    gameInstance = new game(canvas, socket, token, playerName.value);
                     gameInstance.init();
 
 

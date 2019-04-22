@@ -1,9 +1,27 @@
-var currentUsers = 0;
-var maxUsers = undefined;
-var userTokens = {};
+let currentUsers = 0;
+let maxUsers = undefined;
+let userTokens = {};
+let score = {};
 
-function addUser() {
+function addUser(token, name) {
     currentUsers += 1;
+    //score needs to have an association with a token, not just the player's name
+    score[token] = {
+        name: name,
+        score: 0
+    };
+}
+
+function getScore() {
+    return score;
+}
+
+function incrementPoints(token) {
+    score[token].score -= 1;
+}
+
+function decrementScore(token) {
+    score[token].score -= 1;
 }
 
 function getUserCount() {
@@ -37,5 +55,8 @@ module.exports = {
     spaceAvailable: spaceAvailable,
     setUserTokens: setUserTokens,
     getUserTokens: getUserTokens,
-    isTokenValid: isTokenValid
+    isTokenValid: isTokenValid,
+    incrementPoints: incrementPoints,
+    decrementScore: decrementScore,
+    getScore: getScore
 };

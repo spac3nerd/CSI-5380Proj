@@ -7,6 +7,21 @@ let playerTanks = {}; //tracks all player tanks
 let shots = {}; //tracks all shots and their owner
 let lastUpdate = new Date();
 
+//game rules - should really be a separate config
+//note that xmin is defined as being to the left, zMin being at the bottom
+//also note, -Z axis points to the top
+let bounds = {
+    xSpan: 100,
+    zSpan: 100,
+    xMin: -50,
+    xMax: 50,
+    zMax: -50,
+    zMin: 50
+};
+
+let bulletVelocity = 70;
+let movementVelocity = 45;
+
 
 //called for each update from clients
 //note that the position is only set internally in the server
@@ -37,16 +52,38 @@ function shotTaken(token, lookAt) {
     };
 }
 
-function setInitialPlayerState(token, state) {
+//returns a random spawn position on the game map
+function generateSpawnPosition() {
+    let x = Math.floor(Math.random() * (bounds.xSpan - 10)) - Math.abs(bounds.xMin);
+    let z = Math.floor(Math.random() * (bounds.zSpan - 10)) - Math.abs(bounds.zMin);
+    let y = 5;
+
+    return new three.Vector3(x, y, z);
+}
+
+function checkOutOfBounds() {
+    for (let k in playerTanks) {
+        if (playerTanks[k].obj.position.x < -47.5 || playerTanks[k].obj.position.x > 47.5 || playerTanks[k].obj.position.z < -47.5 || playerTanks[k].obj.position.z > 47.5) {
+            let spawnPos = generateSpawnPosition();
+            playerTanks[k].obj.position.set(spawnPos.x, spawnPos.y, spawnPos.z);
+            globalState.decrementScore(k);
+        }
+    }
+}
+
+function setInitialPlayerState(token, state, name) {
     playerTanks[token].lookAt = state.lookAt;
     playerTanks[token].movement = state.movement;
-    playerTanks[token].obj = new three.Object3D();
+    //playerTanks[token].obj = new three.Object3D();
+    //replaced simple 3D obj with mesh to allow for collision check
+    playerTanks[token].obj = new three.Mesh(new three.BoxGeometry(5, 5, 5), new three.MeshBasicMaterial({color: 0x57f92a}));
     playerTanks[token].obj.position.set(state.position.x, state.position.y, state.position.z);
     playerTanks[token].obj.up = new three.Vector3(0, 0, -1);
     playerTanks[token].status = "A"; //A - Active, D - Destroyed
+    playerTanks[token].name = name;
 }
 
-function loopGame(sm) {
+function loopGame() {
     let newTime = new Date();
     let delta = (newTime - lastUpdate) / 1000;
     lastUpdate = newTime;
@@ -58,28 +95,31 @@ function loopGame(sm) {
     for (let k in playerTanks) {
         if (playerTanks[k].movement !== undefined) {
             let mV = new three.Vector3(playerTanks[k].movement.x, playerTanks[k].movement.y, playerTanks[k].movement.z).normalize(); //normalize this vector to prevent any shenanigans
-            playerTanks[k].obj.translateX((mV.x * 45) * delta);
-            playerTanks[k].obj.translateZ((mV.z * 45) * delta);
-
+            playerTanks[k].obj.translateX((mV.x * movementVelocity) * delta);
+            playerTanks[k].obj.translateZ((mV.z * movementVelocity) * delta);
             newPlayerState[k] = {
                 position: playerTanks[k].obj.position,
-                lookAt: playerTanks[k].lookAt
+                lookAt: playerTanks[k].lookAt,
+                name: playerTanks[k].name
             };
         }
     }
 
     let newBulletState = {};
     for (let n in shots) {
-        shots[n].obj.translateX((shots[n].direction.x * 70) * delta);
-        shots[n].obj.translateZ((shots[n].direction.z * 70) * delta);
+        shots[n].obj.translateX((shots[n].direction.x * bulletVelocity) * delta);
+        shots[n].obj.translateZ((shots[n].direction.z * bulletVelocity) * delta);
         newBulletState[n] = {
             position: shots[n].obj.position,
         };
     }
 
+    checkOutOfBounds();
+
     socketManager.broadcast({
         players: newPlayerState,
-        bullets: newBulletState
+        bullets: newBulletState,
+        score: globalState.getScore()
     });
 }
 
@@ -91,5 +131,6 @@ module.exports = {
     updatePlayer: updatePlayer,
     addTank: addTank,
     setInitialPlayerState: setInitialPlayerState,
-    shotTaken: shotTaken
+    shotTaken: shotTaken,
+    generateSpawnPosition: generateSpawnPosition
 };

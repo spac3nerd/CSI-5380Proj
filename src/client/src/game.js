@@ -12,10 +12,11 @@
 //constructor
 //canvas - the target cavas element onto which to render
 //socket - the established socket with which to communicate with the server
-game = function(canvas, socket, token) {
+game = function(canvas, socket, token, name) {
     this.canvas = canvas;
     this.socket = socket;
     this.token = token;
+    this.name = name;
 
     //init world objects to default
     this.scene = undefined;
@@ -48,7 +49,11 @@ game.prototype = {
         console.log(this.canvas);
         console.log(this.socket);
         this.configSocket();
-        this.socket.emit('joinGame', {token: token});
+        console.log(this.name);
+        this.socket.emit('joinGame', {
+            token: token,
+            name: this.name
+        });
     },
 
     configSocket: function() {
@@ -168,8 +173,8 @@ game.prototype = {
         this.scene.add(this.redZone);
 
         //not really part of the scene, just used to help with some math
-        this.intersectionPlane = new THREE.Mesh(new THREE.PlaneGeometry(70, 70, 32, 32), new THREE.MeshBasicMaterial({color: 0x00FFFF, visible: true}));
-        this.intersectionPlane.position.set(0, 11, 0);
+        this.intersectionPlane = new THREE.Mesh(new THREE.PlaneGeometry(120, 120, 32, 32), new THREE.MeshBasicMaterial({color: 0x00FFFF, visible: false}));
+        this.intersectionPlane.position.set(0, 0, 0);
         this.intersectionPlane.setRotationFromEuler(new THREE.Euler( 1.57, 0, 0, 'XYZ' ));
         //this.intersectionPlane.up.set(0, 1, 0);
         this.scene.add(this.intersectionPlane);
