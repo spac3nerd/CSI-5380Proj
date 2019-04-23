@@ -7,6 +7,7 @@ var serverOptions = {
     socketPort: 8080, //port to be used by socket.io
     resources: __dirname + "/../client",
     indexPage: __dirname + "/../client/index.html",
+    testPage: __dirname + "/../client/test.html",
     gameOptions: {
         maxPlayers: 4, //max number of concurrent players
         rules: { //define the game type and rules associated with it

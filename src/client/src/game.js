@@ -42,6 +42,7 @@ game = function(canvas, socket, token, name) {
         s: false,
         w: false
     };
+    this.clicked = false;
 };
 
 game.prototype = {
@@ -53,13 +54,13 @@ game.prototype = {
         this.configSocket();
         console.log(this.name);
         this.socket.emit('joinGame', {
-            token: token,
+            token: this.token,
             name: this.name
         });
         //load the typeface font
         let loader = new THREE.FontLoader();
         let that = this;
-        loader.load( "lib/helvetiker_regular.typeface.json", function (font) {
+        loader.load( document.location.origin + "/lib/helvetiker_regular.typeface.json", function (font) {
             that.font = font;
         });
     },
@@ -359,12 +360,12 @@ game.prototype = {
             }
         };
 
-        this.canvas.parentElement.onmousedown = function(e) {
+        this.canvas.onmousedown = function(e) {
             //check for left mouse button
             if (e.button === 0) {
                 //inform server that the player has taken a shot
                 that.socket.emit('shot', {
-                    token: token,
+                    token: that.token,
                     lookAt: that.playerTank.getLookAt()
                 });
                 //knowing that we are guaranteed that the server will receive the shot message, we can start to simulate the bullet now
@@ -409,12 +410,6 @@ game.prototype = {
             //translate the player tank to new position
             this.playerTank.translateX((this.movementVector.x * this.movementVelocity) * delta);
             this.playerTank.translateZ((this.movementVector.z * this.movementVelocity) * delta);
-
-            //test translate bullet
-            if (this.bullets["t"]) {
-                this.bullets["t"].translateX((this.bullets["t"].direction.x * this.movementVelocity) * delta);
-                this.bullets["t"].translateZ((this.bullets["t"].direction.z * this.movementVelocity) * delta);
-            }
         }
         else {
             this.lastRender = new Date();
@@ -422,12 +417,21 @@ game.prototype = {
 
         //update the server on this player's state
         this.socket.emit('playerUpdate', {
-            token: token,
+            token: this.token,
             tankState: {
                 movement: this.movementVector,
                 lookAt: this.playerTank.getLookAt()
             }
         });
+
+        //used only for simulated clicks
+        if (this.clicked) {
+            this.socket.emit('shot', {
+                token: this.token,
+                lookAt: this.playerTank.getLookAt()
+            });
+            this.clicked = false;
+        }
 
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.render.bind(this));

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Testing Page</title>
+        <!-- Load assets -->
+        <script type="text/javascript" src="/src/game.js"></script>
+        <script type="text/javascript" src="/src/tank.js"></script>
+        <script type="text/javascript" src="/src/bullet.js"></script>
+        <script type="text/javascript" src="/lib/three.js"></script>
+        <script type="text/javascript" src="/lib/socketio.js"></script>
+        <!-- will be used to dynamically create elements -->
+        <script type="text/javascript" src="/lib/jquery.js"></script>
+        <link rel="stylesheet" type="text/css" href="/css/test.css">
+    </head>
+    <body>
+
+    <div class="column">
+        <div tabindex="1" id="window1" class="container row">
+            <div class="column">
+                <div class="instanceContainer" id="container1"></div>
+                <div class="instanceContainer" id="container2"></div>
+            </div>
+            <div class="column">
+                <div class="instanceContainer" id="container3"></div>
+                <div class="instanceContainer" id="container4"></div>
+            </div>
+        </div>
+
+        <div class="row dataContainer">
+            <div class="title">
+                Automated Testing Page
+            </div>
+            <div class="runAllContainer">
+                <input type="button" value="Run All Tests" onclick="runAll()" class="individualButton"/>
+            </div>
+            <div class="testCase" id="testCase1">
+                <input type="button" value="T1" onclick="testCase1()" class="individualButton"/>
+                <div>Fetch number of players - expect 0</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase2">
+                <input type="button" value="T2" onclick="testCase2()" class="individualButton"/>
+                <div>Player is granted a session token on request</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase3">
+                <input type="button" value="T3" onclick="testCase3()" class="individualButton"/>
+                <div>Player 1's game instance initializes successfully</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase4">
+                <input type="button" value="T4" onclick="testCase4()" class="individualButton"/>
+                <div>Player 1's can move left</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase5">
+                <input type="button" value="T5" onclick="testCase5()" class="individualButton"/>
+                <div>Player 1's can move right</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase6">
+                <input type="button" value="T6" onclick="testCase6()" class="individualButton"/>
+                <div>Player 1's can move up</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase7">
+                <input type="button" value="T7" onclick="testCase7()" class="individualButton"/>
+                <div>Player 1's can move down</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase8">
+                <input type="button" value="T8" onclick="testCase8()" class="individualButton"/>
+                <div>Moving into Red Zone leads to point loss</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase9">
+                <input type="button" value="T9" onclick="testCase9()" class="individualButton"/>
+                <div>Player 2's instance is initialized</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase10">
+                <input type="button" value="T10" onclick="testCase10()" class="individualButton"/>
+                <div>Player 2's movement is received by P1</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase11">
+                <input type="button" value="T11" onclick="testCase11()" class="individualButton"/>
+                <div>Player 2 shooting Player 1 gains points and respawn</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase12">
+                <input type="button" value="T12" onclick="testCase12()" class="individualButton"/>
+                <div>Player 3's instance is initialized</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+            <div class="testCase" id="testCase13">
+                <input type="button" value="T13" onclick="testCase13()" class="individualButton"/>
+                <div>Player 4's instance is initialized</div>
+                <div class="pass" style="visibility: hidden;">PASS</div>
+                <div class="fail" style="visibility: hidden;">FAIL</div>
+            </div>
+        </div>
+    </div>
+    </body>
+
+    <script type="text/javascript">
+        let container1 = $("#container1");
+        let container2 = $("#container2");
+        let container3 = $("#container3");
+        let container4 = $("#container4");
+
+        let case1 = {
+            elem: $("#testCase1"),
+            passed: false
+        };
+        let case2 = {
+            elem: $("#testCase2"),
+            passed: false
+        };
+        let case3 = {
+            elem: $("#testCase3"),
+            passed: false
+        };
+        let case4 = {
+            elem: $("#testCase4"),
+            passed: false
+        };
+        let case5 = {
+            elem: $("#testCase5"),
+            passed: false
+        };
+        let case6 = {
+            elem: $("#testCase6"),
+            passed: false
+        };
+        let case7 = {
+            elem: $("#testCase7"),
+            passed: false
+        };
+        let case8 = {
+            elem: $("#testCase8"),
+            passed: false
+        };
+        let case9 = {
+            elem: $("#testCase9"),
+            passed: false
+        };
+        let case10 = {
+            elem: $("#testCase10"),
+            passed: false
+        };
+        let case11 = {
+            elem: $("#testCase11"),
+            passed: false
+        };
+        let case12 = {
+            elem: $("#testCase12"),
+            passed: false
+        };
+        let case13 = {
+            elem: $("#testCase13"),
+            passed: false
+        };
+
+
+        let p1Name = "Test Player 1";
+        let p2Name = "Test Player 2";
+        let p3Name = "Test Player 3";
+        let p4Name = "Test Player 4";
+
+        let token1 = undefined;
+        let token2 = undefined;
+        let token3 = undefined;
+        let token4 = undefined;
+
+        let game1 = undefined;
+        let game2 = undefined;
+        let game3 = undefined;
+        let game4 = undefined;
+
+        //define the endpoints of the server
+        let playerCountEndPoint = "session/getActivePlayers";
+        let requestSessionEndPoint = "session/createNewSession";
+        let socketURL = "http://localhost:8080";
+        let socket = undefined;
+
+        let expect = function(expected, comparison) {
+            for (let k = 0, n = comparison.length; k < n; k++) {
+                if (comparison[k] !== expected) {
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        //sets PASS/FAIL on test row
+        let setState = function(cs, pass) {
+            if (pass) {
+                cs.elem.children()[2].style.visibility = "visible";
+                cs.passed = true;
+            }
+            else {
+                cs.elem.children()[3].style.visibility = "visible";
+                cs.passed = false;
+            }
+        };
+
+
+        //test that init player count is 0
+        let testCase1 = function() {
+            sendRequest("GET", playerCountEndPoint, {}, function(response) {
+                if (response.success) {
+                    console.log(response.data.count);
+                    if (expect(0, [response.data.count])) {
+                        setState(case1, true);
+                    }
+                    else {
+                        setState(case1, false);
+                    }
+                }
+                else {
+                    setState(case1, false);
+                }
+            });
+        };
+
+        //test that first player is granted a session token
+        let testCase2 = function() {
+            //ask server for a player entry
+            sendRequest("POST", requestSessionEndPoint, {
+                playerName: p1Name
+            }, function(response) {
+                token1 = response.data.token;
+                setState(case2, response.success);
+            });
+        };
+
+        //test that first player's instance start successfully
+        let testCase3 = function() {
+            try {
+                socket = io(socketURL);
+                game1 = new game(container1[0], socket, token1, p1Name);
+                game1.init();
+                setState(case3, true);
+            }
+            catch (e) {
+                console.log(e.stack);
+                //any exception which floats to this level should fail the test
+                setState(case3, false);
+            }
+        };
+
+        //Player 1 can move left - expect position's X value to be less than it was initially
+        let testCase4 = function() {
+            try {
+                let originalPosition = game1.playerTank.group.position.x;
+                game1.pressedMovementKey.a = true; //simulate keydown
+                let attempts = 3; //since we're not sure of the exact response time, we give some padding
+                function check() {
+                    let currentPosition = game1.playerTank.group.position.x;
+                    if (currentPosition < originalPosition) {
+                        game1.pressedMovementKey.a = false;
+                        setState(case4, true);
+                    }
+                    else {
+                        if (attempts > 1) {
+                            attempts -= 1;
+                            console.log("wait");
+                            setTimeout(check, 50);
+                            check();
+                        }
+                        else {
+                            game1.pressedMovementKey.a = false;
+                            setState(case4, false);
+                        }
+                    }
+                }
+
+                setTimeout(function () {
+                    check();
+                    }, 50);
+
+            }
+            catch (e) {
+                console.log(e.stack);
+                //any exception which floats to this level should fail the test
+                setState(case4, false);
+            }
+        };
+
+        //Player 1 can move right - expect position's X value to be greater than it was initially
+        let testCase5 = function() {
+            try {
+                let originalPosition = game1.playerTank.group.position.x;
+                game1.pressedMovementKey.d = true; //simulate keydown
+                let attempts = 3; //since we're not sure of the exact response time, we give some padding
+                function check() {
+                    let currentPosition = game1.playerTank.group.position.x;
+                    if (currentPosition > originalPosition) {
+                        game1.pressedMovementKey.d = false;
+                        setState(case5, true);
+                    }
+                    else {
+                        if (attempts > 1) {
+                            attempts -= 1;
+                            setTimeout(check, 50);
+                        }
+                        else {
+                            game1.pressedMovementKey.d = false;
+                            setState(case5, false);
+                        }
+                    }
+                }
+
+                setTimeout(function () {
+                    check();
+                }, 50);
+
+            }
+            catch (e) {
+                console.log(e.stack);
+                //any exception which floats to this level should fail the test
+                setState(case5, false);
+            }
+        };
+
+        //Player 1 can move up - expect position's Z value to be less than it was initially
+        let testCase6 = function() {
+            try {
+                let originalPosition = game1.playerTank.group.position.z;
+                game1.pressedMovementKey.w = true; //simulate keydown
+                let attempts = 3; //since we're not sure of the exact response time, we give some padding
+                function check() {
+                    let currentPosition = game1.playerTank.group.position.z;
+                    if (currentPosition < originalPosition) {
+                        game1.pressedMovementKey.w = false;
+                        setState(case6, true);
+                    }
+                    else {
+                        if (attempts > 1) {
+                            attempts -= 1;
+                            setTimeout(check, 50);
+                        }
+                        else {
+                            game1.pressedMovementKey.w = false;
+                            setState(case6, false);
+                        }
+                    }
+                }
+
+                setTimeout(function () {
+                    check();
+                }, 50);
+
+            }
+            catch (e) {
+                console.log(e.stack);
+                //any exception which floats to this level should fail the test
+                setState(case6, false);
+            }
+        };
+
+        //Player 1 can move down - expect position's Z value to be greater than it was initially
+        let testCase7 = function() {
+            try {
+                let originalPosition = game1.playerTank.group.position.z;
+                game1.pressedMovementKey.s = true; //simulate keydown
+                let attempts = 3; //since we're not sure of the exact response time, we give some padding
+                function check() {
+                    let currentPosition = game1.playerTank.group.position.z;
+                    if (currentPosition > originalPosition) {
+                        game1.pressedMovementKey.s = false;
+                        setState(case7, true);
+                    }
+                    else {
+                        if (attempts > 1) {
+                            attempts -= 1;
+                            setTimeout(check, 50);
+                        }
+                        else {
+                            game1.pressedMovementKey.s = false;
+                            setState(case7, false);
+                        }
+                    }
+                }
+
+                setTimeout(function () {
+                    check();
+                }, 50);
+
+            }
+            catch (e) {
+                console.log(e.stack);
+                //any exception which floats to this level should fail the test
+                setState(case7, false);
+            }
+        };
+
+        //Red Zone results in respawn and point loss
+        let testCase8 = function() {
+            try {
+                let originalScore = game1.playerTank.score;
+                game1.pressedMovementKey.s = true; //simulate keydown
+                let attempts = 40; //since we're not sure of the exact response time, we give some padding
+                function check() {
+                    let currentScore = game1.playerTank.score;
+                    console.log(originalScore);
+                    console.log(currentScore);
+                    if (expect(originalScore - 1, [currentScore])) {
+                        game1.pressedMovementKey.s = false;
+                        setState(case8, true);
+                    }
+                    else {
+                        if (attempts > 1) {
+                            attempts -= 1;
+                            setTimeout(check, 150);
+                        }
+                        else {
+                            game1.pressedMovementKey.s = false;
+                            setState(case8, false);
+                        }
+                    }
+                }
+
+                setTimeout(function () {
+                    check();
+                }, 150);
+
+            }
+            catch (e) {
+                console.log(e.stack);
+                //any exception which floats to this level should fail the test
+                setState(case7, false);
+            }
+        };
+
+        //Player 2 instance starts up
+        let testCase9 = function() {
+            //ask server for a player entry
+            sendRequest("POST", requestSessionEndPoint, {
+                playerName: p2Name
+            }, function(response) {
+                token2 = response.data.token;
+                if (!response.success) {
+                    setState(case9, false);
+                }
+                try {
+                    game2 = new game(container2[0], io(socketURL), token2, p2Name);
+                    game2.init();
+                    setState(case9, true);
+                }
+                catch (e) {
+                    console.log(e.stack);
+                    //any exception which floats to this level should fail the test
+                    setState(case9, false);
+                }
+            });
+        };
+
+        //Player 2 movement is captured on both simulations
+        let testCase10 = function() {
+            try {
+                //position of P2 on P1's screen
+                let originalPositionZ = game1.otherPlayers[token2].group.position.z;
+                let originalPositionX = game1.otherPlayers[token2].group.position.x;
+
+                //simulate keydown on P2
+                game2.pressedMovementKey.s = true;
+                game2.pressedMovementKey.a = true;
+                let attempts = 3; //since we're not sure of the exact response time, we give some padding
+                function check() {
+                    //current position of P2 on P1's screen
+                    let currentPositionX = game1.otherPlayers[token2].group.position.x;
+                    let currentPositionZ = game1.otherPlayers[token2].group.position.z;
+                    //expect that P1's known position of P2 has changed
+                    if (!expect(originalPositionZ, [currentPositionX]) && !expect(originalPositionX, [currentPositionZ])) {
+                        game2.pressedMovementKey.s = false;
+                        game2.pressedMovementKey.a = false;
+                        setState(case10, true);
+                    }
+                    else {
+                        if (attempts > 1) {
+                            attempts -= 1;
+                            setTimeout(check, 50);
+                        }
+                        else {
+                            game2.pressedMovementKey.s = false;
+                            setState(case10, false);
+                        }
+                    }
+                }
+
+                setTimeout(function () {
+                    check();
+                }, 50);
+
+            }
+            catch (e) {
+                console.log(e.stack);
+                //any exception which floats to this level should fail the test
+                setState(case10, false);
+            }
+
+        };
+
+        //Shooting increases points and respawns shot player
+        let testCase11 = function() {
+            try {
+                //position of P1
+                let originalPositionZ = game1.playerTank.group.position.z;
+                let originalPositionX = game1.playerTank.group.position.x;
+                //P2's original score
+                let originalP2Score = game2.playerTank.score;
+
+                //Make P2 aim at P1
+                game2.playerTank.setLookAt(game1.playerTank.group.position);
+                //simulate a click on P2's DOM container
+                game2.clicked = true;
+                let attempts = 40; //since we're not sure of the exact response time, we give some padding
+                function check() {
+                    //current position of P1
+                    let currentPositionX = game1.playerTank.group.position.x;
+                    let currentPositionZ = game1.playerTank.group.position.z;
+
+                    //current P2 score
+                    let currentP2Score = game2.playerTank.score;
+
+                    //expect that P1 has re-spwned and P2's score has increased by one
+                    if ( (!expect(originalPositionZ, [currentPositionX]) && !expect(originalPositionX, [currentPositionZ])) && (expect(originalP2Score + 1, [currentP2Score]))) {
+                        setState(case11, true);
+                    }
+                    else {
+                        if (attempts > 1) {
+                            attempts -= 1;
+                            setTimeout(check, 50);
+                        }
+                        else {
+                            setState(case11, false);
+                        }
+                    }
+                }
+
+                setTimeout(function () {
+                    check();
+                }, 50);
+
+            }
+            catch (e) {
+                console.log(e.stack);
+                //any exception which floats to this level should fail the test
+                setState(case11, false);
+            }
+
+        };
+        //Player 3 instance starts up
+        let testCase12 = function() {
+            //ask server for a player entry
+            sendRequest("POST", requestSessionEndPoint, {
+                playerName: p3Name
+            }, function(response) {
+                token3 = response.data.token;
+                if (!response.success) {
+                    setState(case12, false);
+                }
+                try {
+                    game3 = new game(container3[0], io(socketURL), token3, p3Name);
+                    game3.init();
+                    setState(case12, true);
+                }
+                catch (e) {
+                    console.log(e.stack);
+                    //any exception which floats to this level should fail the test
+                    setState(case12, false);
+                }
+            });
+        };
+
+        //Player 4 instance starts up
+        let testCase13 = function() {
+            //ask server for a player entry
+            sendRequest("POST", requestSessionEndPoint, {
+                playerName: p4Name
+            }, function(response) {
+                token4 = response.data.token;
+                if (!response.success) {
+                    setState(case13, false);
+                }
+                try {
+                    game4 = new game(container4[0], io(socketURL), token4, p4Name);
+                    game4.init();
+                    setState(case13, true);
+                }
+                catch (e) {
+                    console.log(e.stack);
+                    //any exception which floats to this level should fail the test
+                    setState(case13, false);
+                }
+            });
+        };
+
+        //should come up with a better method, maybe using hte passed flags since it relies on the timeouts being vaguely right
+        let runAll = function() {
+
+            setTimeout(function() {
+                testCase1();
+                setTimeout(function() {
+                    testCase2();
+                    setTimeout(function() {
+                        testCase3();
+                        setTimeout(function() {
+                            testCase4();
+                            setTimeout(function() {
+                                testCase5();
+                                setTimeout(function() {
+                                    testCase6();
+                                    setTimeout(function() {
+                                        testCase7();
+                                        setTimeout(function() {
+                                            testCase8();
+                                            setTimeout(function() {
+                                                testCase9();
+                                                setTimeout(function() {
+                                                    testCase10();
+                                                    setTimeout(function() {
+                                                        testCase11();
+                                                        setTimeout(function() {
+                                                            testCase12();
+                                                            setTimeout(function() {
+                                                                testCase13();
+                                                            }, 1500);
+                                                        }, 6000);
+                                                    }, 500);
+                                                }, 1000);
+                                            }, 6000);
+                                        }, 500);
+                                    }, 500);
+                                }, 500);
+                            }, 500);
+                        }, 500);
+                    }, 500);
+                }, 500);
+            }, 100);
+
+
+        };
+
+
+        //used to send HTTP requests to the server which hosts this page
+        function sendRequest(type, route, packet, callback) {
+            let url = "http://localhost/";
+            $.ajax({
+                url: url + route,
+                type: type,
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(packet)
+            }).done(function(data, text, request) {
+                if (callback) {
+                    callback(data);
+                }
+            });
+        }
+
+    </script>
+
+</html>

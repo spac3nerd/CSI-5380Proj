@@ -5,7 +5,8 @@ function gameServer(gameSettings) {
     var http = require("http");
     var globalState = require("../gameCore/global-state");
     var socketManager = require("../gameCore/socket-manager");
-    var socketio = require('socket.io');
+    var socketio = require('socket.io'); // should be implemented on top of WebSocket directly for better performance
+    var path = require('path');
 
     globalState.setMaxUsers(gameSettings.gameOptions.maxPlayers);
 
@@ -29,7 +30,12 @@ function gameServer(gameSettings) {
 
     //default route
     app.get("/", function(req, res) {
-        res.sendFile(gameSettings.indexPage);
+        res.sendFile(path.resolve(gameSettings.indexPage));
+    });
+
+    //route for tests
+    app.get("/tests", function(req, res) {
+        res.sendFile(path.resolve(gameSettings.testPage));
     });
 
     //map the routes

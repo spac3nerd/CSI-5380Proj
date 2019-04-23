@@ -20,7 +20,7 @@ let bounds = {
 };
 
 let bulletVelocity = 80;
-let movementVelocity = 55;
+let movementVelocity = 45;
 
 
 //called for each update from clients

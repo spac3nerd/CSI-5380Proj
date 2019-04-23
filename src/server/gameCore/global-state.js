@@ -1,5 +1,5 @@
 let currentUsers = 0;
-let maxUsers = undefined;
+let maxUsers = 4;
 let userTokens = {};
 let score = {};
 
