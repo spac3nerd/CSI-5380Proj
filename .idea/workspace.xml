@@ -28,8 +28,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/server/gameCore/gameLoop.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="275">
-              <caret line="141" column="32" lean-forward="true" selection-start-line="141" selection-start-column="32" selection-end-line="141" selection-end-column="32" />
+            <state relative-caret-position="292">
+              <caret line="112" column="28" lean-forward="true" selection-start-line="112" selection-start-column="28" selection-end-line="112" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" column="5" lean-forward="true" selection-start-line="1" selection-start-column="5" selection-end-line="1" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -53,11 +62,6 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/server/routes/debugging.js">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/server/gameCore/global-state.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="51">
@@ -75,7 +79,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/client/test.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="429">
@@ -152,7 +156,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>textgeo</find>
       <find>textGeo</find>
       <find>deb</find>
       <find>textgeom</find>
@@ -175,13 +178,14 @@
       <find>tick</find>
       <find>adduser</find>
       <find>playerupdate</find>
-      <find>1000</find>
       <find>alert</find>
       <find>mousemove</find>
       <find>setlookat</find>
       <find>mousedown</find>
       <find>shot</find>
       <find>game1</find>
+      <find>runall</find>
+      <find>1000</find>
     </findStrings>
     <replaceStrings>
       <replace>Math.PI / 2</replace>
@@ -205,7 +209,6 @@
         <option value="$PROJECT_DIR$/src/server/package.json" />
         <option value="$PROJECT_DIR$/src/server/routes/session.js" />
         <option value="$PROJECT_DIR$/src/client/css/styles.css" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/client/src/bullet.js" />
         <option value="$PROJECT_DIR$/src/client/lib/helvetiker_regular.typeface.json" />
         <option value="$PROJECT_DIR$/src/client/src/tank.js" />
@@ -218,6 +221,7 @@
         <option value="$PROJECT_DIR$/src/client/src/game.js" />
         <option value="$PROJECT_DIR$/src/client/css/test.css" />
         <option value="$PROJECT_DIR$/src/client/test.html" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -248,51 +252,6 @@
               <item name="CSIProj" type="b2602c69:ProjectViewProjectNode" />
               <item name="proj" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="CSIProj" type="b2602c69:ProjectViewProjectNode" />
-              <item name="proj" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CSIProj" type="b2602c69:ProjectViewProjectNode" />
-              <item name="proj" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CSIProj" type="b2602c69:ProjectViewProjectNode" />
-              <item name="proj" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="css" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CSIProj" type="b2602c69:ProjectViewProjectNode" />
-              <item name="proj" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CSIProj" type="b2602c69:ProjectViewProjectNode" />
-              <item name="proj" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CSIProj" type="b2602c69:ProjectViewProjectNode" />
-              <item name="proj" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-              <item name="gameCore" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CSIProj" type="b2602c69:ProjectViewProjectNode" />
-              <item name="proj" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -303,7 +262,7 @@
     <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1555984207419" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1555985410320" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src/server/package.json" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -354,18 +313,18 @@
       <option name="presentableId" value="Default" />
       <updated>1554250459512</updated>
       <workItem from="1554250463383" duration="631000" />
-      <workItem from="1555425897754" duration="73574000" />
+      <workItem from="1555425897754" duration="74333000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="74205000" />
+    <option name="totallyTimeSpent" value="74964000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25266525" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25266525" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -374,7 +333,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.248104" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.248104" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.22210184" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -439,13 +398,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="23" selection-start-column="23" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/client/src/bullet.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -495,13 +447,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="340">
           <caret line="32" column="49" lean-forward="true" selection-start-line="32" selection-start-column="49" selection-end-line="32" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/server/gameCore/gameLoop.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="275">
-          <caret line="141" column="32" lean-forward="true" selection-start-line="141" selection-start-column="32" selection-end-line="141" selection-end-column="32" />
         </state>
       </provider>
     </entry>
@@ -567,6 +512,20 @@
             <element signature="n#style#0;n#div#1;n#div#13;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#2;n#div#13;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server/gameCore/gameLoop.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="112" column="28" lean-forward="true" selection-start-line="112" selection-start-column="28" selection-end-line="112" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="5" lean-forward="true" selection-start-line="1" selection-start-column="5" selection-end-line="1" selection-end-column="5" />
         </state>
       </provider>
     </entry>
