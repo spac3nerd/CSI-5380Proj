@@ -43,7 +43,7 @@
         //define the endpoints of the server
         var playerCountEndPoint = "session/getActivePlayers";
         var requestSessionEndPoint = "session/createNewSession";
-        var socketPort = 8080;
+        var socketPort = 8081;
         var socketURL = ""; //will be set upon connection
         var socket = undefined;
         var token = undefined;
@@ -80,12 +80,14 @@
                     token = response.data.token;
 
                     if (document.baseURI[document.URL.length - 1] === "/") {
-                        socketURL = document.baseURI.slice(0, document.URL.length - 1) + ":" + socketPort;
+                        //socketURL = document.baseURI.slice(0, document.URL.length - 1) + ":" + socketPort;
+                        let tokens = document.baseURI.split(":");
+                        socketURL = tokens[0] + ":" + tokens[1] + ":" + socketPort;
                     }
                     else {
                         socketURL = document.baseURI + ":" + socketPort;
                     }
-
+                    debugger;
                     console.log(socketURL);
                     socket = io(socketURL);
                     gameInstance = new game(canvas, socket, token, playerName.value);

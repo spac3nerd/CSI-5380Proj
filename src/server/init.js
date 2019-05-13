@@ -3,8 +3,8 @@ var server;
 
 var serverOptions = {
     baseURL: global.baseURL,
-    httpPort: 80, //only providing HTTP, security is not a concern for this project
-    socketPort: 8080, //port to be used by socket.io
+    httpPort: 8080, //only providing HTTP, security is not a concern for this project
+    socketPort: 8081, //port to be used by socket.io
     resources: __dirname + "/../client",
     indexPage: __dirname + "/../client/index.html",
     testPage: __dirname + "/../client/test.html",
