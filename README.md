@@ -1,4 +1,4 @@
-# CSI-5380Proj
+# NodeTank
 Quick demo project to go along with CSI 5380 research paper 
 
 ## Prerequisites:
